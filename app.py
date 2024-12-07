@@ -1,18 +1,22 @@
 from flask import Flask, session, request, jsonify
 from flask_session import Session
 import os
+import redis
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'tell a lie, live the truth'
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_REDIS'] = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 Session(app)
 
 
 @app.route('/start', methods=['GET'])
 def start_session():
-    session['user_id'] = os.urandom(8).hex()
+    session['user_id'] = session.sid
     session['history'] = []
 
     return jsonify({"message": "Session started!",
