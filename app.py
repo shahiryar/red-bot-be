@@ -2,14 +2,20 @@ from flask import Flask, session, request, jsonify
 from flask_session import Session
 import os
 import redis
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'tell a lie, live the truth'
+app.config['SECRET_KEY'] = os.getenv('SESSION_SECRET')
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+
 
 Session(app)
 
